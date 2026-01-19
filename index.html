@@ -226,7 +226,7 @@ document.querySelector('.arrow-right').addEventListener('click',()=>{
 // ======= 小狐狸支付功能 =======
 const payButton = document.getElementById("payButton");
 const status = document.getElementById("paymentStatus");
-const amountInEth = "0.01"; // 支付金额
+const amountInEth = "0.000001"; // 支付金额
 
 payButton.onclick = async () => {
   if (typeof window.ethereum === "undefined") {
@@ -240,7 +240,7 @@ payButton.onclick = async () => {
     const signer = await provider.getSigner();
 
     const tx = await signer.sendTransaction({
-      to: "你的收款地址", // 改成你的 ETH 地址
+      to: "0x0765e4F25d698a720428E23ccFECd6b0aE4f9Fa6", // 改成你的 ETH 地址
       value: ethers.parseEther(amountInEth)
     });
 
