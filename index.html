@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>防水施工图册展示</title>
+<title>防水施工图册展示 + 小狐狸支付</title>
 <style>
 body {
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -97,6 +96,23 @@ footer p { margin:4px 0; }
 .contact p { font-size:16px; line-height:1.6; }
 .contact a { color:#1e6091; text-decoration:none; }
 .contact a:hover { text-decoration:underline; }
+
+.payment {
+  text-align:center;
+  margin:40px 0;
+}
+#payButton {
+  background-color:#f6851b;
+  color:#fff;
+  border:none;
+  padding:12px 25px;
+  font-size:16px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.3s;
+}
+#payButton:hover { background-color:#e2761b; }
+#paymentStatus { margin-top:10px; font-size:14px; color:#2f3e46; }
 </style>
 </head>
 <body>
@@ -124,6 +140,13 @@ footer p { margin:4px 0; }
     <p>联系电话: +86 123 4567 8901</p>
     <p>公司地址: 中国上海市示例路123号</p>
   </div>
+
+  <div class="payment">
+    <h2>支持我们 / 小狐狸支付</h2>
+    <button id="payButton">支付 0.01 ETH</button>
+    <p id="paymentStatus"></p>
+  </div>
+
 </main>
 
 <footer>
@@ -131,6 +154,7 @@ footer p { margin:4px 0; }
   <p>© 2026 防水施工项目演示页面 | All Rights Reserved</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.min.js"></script>
 <script>
 const nodes = [
   {node:'https://via.placeholder.com/400x300/1e6091/ffffff?text=节点图1', photo:'https://via.placeholder.com/400x300/7fb069/ffffff?text=施工照片1', text:'施工步骤 1: 基础防水施工'},
@@ -198,6 +222,36 @@ document.querySelector('.arrow-right').addEventListener('click',()=>{
   currentIndex=(currentIndex+1)%totalCards;
   updateCarousel();
 });
+
+// ======= 小狐狸支付功能 =======
+const payButton = document.getElementById("payButton");
+const status = document.getElementById("paymentStatus");
+const amountInEth = "0.01"; // 支付金额
+
+payButton.onclick = async () => {
+  if (typeof window.ethereum === "undefined") {
+    status.innerText = "未检测到 MetaMask，请安装或启用扩展钱包";
+    return;
+  }
+
+  try {
+    await ethereum.request({ method: 'eth_requestAccounts' }); // 请求连接钱包
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+
+    const tx = await signer.sendTransaction({
+      to: "你的收款地址", // 改成你的 ETH 地址
+      value: ethers.parseEther(amountInEth)
+    });
+
+    status.innerText = "交易发送成功，等待确认...";
+    await tx.wait();
+    status.innerText = `支付成功，交易哈希: ${tx.hash}`;
+  } catch (err) {
+    console.error(err);
+    status.innerText = "支付失败或用户取消操作";
+  }
+};
 </script>
 
 </body>
